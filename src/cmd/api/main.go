@@ -7,10 +7,10 @@ import (
     swaggerFiles "github.com/swaggo/files"
     ginSwagger "github.com/swaggo/gin-swagger"
     
-    _ "gastei-quanto/docs"
+    // _ "gastei-quanto/docs"
 )
 
-// @title Expense Analyzer API
+// @title Gastei Quanto API
 // @version 1.0
 // @description API para análise de faturas do Nubank
 
