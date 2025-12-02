@@ -21,10 +21,6 @@ import (
 func main() {
 	router := gin.Default()
 
-	parserService := parser.NewService()
-	parserHandler := parser.NewHandler(parserService)
-	parser.RegisterRoutes(router, parserHandler)
-
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	api := router.Group("/api/v1")
@@ -32,6 +28,10 @@ func main() {
 		api.GET("/health", func(c *gin.Context) {
 			c.JSON(200, gin.H{"status": "ok"})
 		})
+
+		parserService := parser.NewService()
+		parserHandler := parser.NewHandler(parserService)
+		parser.RegisterRoutes(api, parserHandler)
 	}
 
 	log.Println("🚀 Servidor rodando na porta 8080")

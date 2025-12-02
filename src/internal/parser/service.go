@@ -31,8 +31,12 @@ func (s *service) ParseCSV(file io.Reader) ([]Transaction, error) {
 
 	dateIdx := findColumn(header, "date", "data")
 	categoryIdx := findColumn(header, "category", "categoria")
-	descIdx := findColumn(header, "description", "titulo", "título", "descricao", "descrição")
+	descIdx := findColumn(header, "title", "description", "titulo", "título", "descricao", "descrição")
 	amountIdx := findColumn(header, "amount", "value", "valor")
+
+	if dateIdx == -1 || amountIdx == -1 {
+		return nil, fmt.Errorf("colunas obrigatórias não encontradas (date, amount)")
+	}
 
 	var transactions []Transaction
 
@@ -42,6 +46,10 @@ func (s *service) ParseCSV(file io.Reader) ([]Transaction, error) {
 			break
 		}
 		if err != nil {
+			continue
+		}
+
+		if len(record) <= dateIdx || len(record) <= amountIdx {
 			continue
 		}
 
@@ -55,10 +63,20 @@ func (s *service) ParseCSV(file io.Reader) ([]Transaction, error) {
 			continue
 		}
 
+		category := ""
+		if categoryIdx >= 0 && len(record) > categoryIdx {
+			category = record[categoryIdx]
+		}
+
+		description := ""
+		if descIdx >= 0 && len(record) > descIdx {
+			description = record[descIdx]
+		}
+
 		transactions = append(transactions, Transaction{
 			Date:        date,
-			Category:    record[categoryIdx],
-			Description: record[descIdx],
+			Category:    category,
+			Description: description,
 			Amount:      amount,
 		})
 	}
@@ -75,7 +93,7 @@ func findColumn(header []string, names ...string) int {
 			}
 		}
 	}
-	return 0
+	return -1
 }
 
 func parseDate(dateStr string) (time.Time, error) {
