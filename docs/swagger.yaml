@@ -1,0 +1,65 @@
+basePath: /api/v1
+definitions:
+  parser.Transaction:
+    properties:
+      amount:
+        type: number
+      category:
+        type: string
+      date:
+        type: string
+      description:
+        type: string
+    type: object
+  parser.UploadResponse:
+    properties:
+      count:
+        type: integer
+      message:
+        type: string
+      transactions:
+        items:
+          $ref: '#/definitions/parser.Transaction'
+        type: array
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API para análise de faturas do Nubank
+  title: Gastei Quanto API
+  version: "1.0"
+paths:
+  /parser/upload/csv:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Faz upload de um arquivo CSV contendo transações
+      parameters:
+      - description: CSV file
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/parser.UploadResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Upload CSV
+      tags:
+      - parser
+swagger: "2.0"
