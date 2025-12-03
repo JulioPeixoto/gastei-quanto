@@ -1,6 +1,7 @@
 package main
 
 import (
+	"gastei-quanto/src/internal/analysis"
 	"gastei-quanto/src/internal/parser"
 	"log"
 
@@ -32,6 +33,10 @@ func main() {
 		parserService := parser.NewService()
 		parserHandler := parser.NewHandler(parserService)
 		parser.RegisterRoutes(api, parserHandler)
+
+		analysisService := analysis.NewService()
+		analysisHandler := analysis.NewHandler(analysisService)
+		analysis.RegisterRoutes(api, analysisHandler)
 	}
 
 	log.Println("🚀 Servidor rodando na porta 8080")

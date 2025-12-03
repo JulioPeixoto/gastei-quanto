@@ -9,6 +9,49 @@
     "host": "localhost:8080",
     "basePath": "/api/v1",
     "paths": {
+        "/analysis/transactions": {
+            "post": {
+                "description": "Agrupa e analisa transações por categoria e descrição",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "analysis"
+                ],
+                "summary": "Analisa transações",
+                "parameters": [
+                    {
+                        "description": "Lista de transações",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/analysis.AnalysisRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/analysis.AnalysisResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/parser/upload/csv": {
             "post": {
                 "description": "Faz upload de um arquivo CSV contendo transações",
@@ -61,6 +104,94 @@
         }
     },
     "definitions": {
+        "analysis.AnalysisRequest": {
+            "type": "object",
+            "properties": {
+                "transactions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/analysis.Transaction"
+                    }
+                }
+            }
+        },
+        "analysis.AnalysisResponse": {
+            "type": "object",
+            "properties": {
+                "by_category": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/analysis.CategorySummary"
+                    }
+                },
+                "by_description": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/analysis.DescriptionSummary"
+                    }
+                },
+                "net_balance": {
+                    "type": "number"
+                },
+                "total_income": {
+                    "type": "number"
+                },
+                "total_spent": {
+                    "type": "number"
+                },
+                "transaction_count": {
+                    "type": "integer"
+                }
+            }
+        },
+        "analysis.CategorySummary": {
+            "type": "object",
+            "properties": {
+                "average": {
+                    "type": "number"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "count": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "number"
+                }
+            }
+        },
+        "analysis.DescriptionSummary": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "total": {
+                    "type": "number"
+                }
+            }
+        },
+        "analysis.Transaction": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                }
+            }
+        },
         "parser.Transaction": {
             "type": "object",
             "properties": {

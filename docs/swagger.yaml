@@ -1,5 +1,62 @@
 basePath: /api/v1
 definitions:
+  analysis.AnalysisRequest:
+    properties:
+      transactions:
+        items:
+          $ref: '#/definitions/analysis.Transaction'
+        type: array
+    type: object
+  analysis.AnalysisResponse:
+    properties:
+      by_category:
+        items:
+          $ref: '#/definitions/analysis.CategorySummary'
+        type: array
+      by_description:
+        items:
+          $ref: '#/definitions/analysis.DescriptionSummary'
+        type: array
+      net_balance:
+        type: number
+      total_income:
+        type: number
+      total_spent:
+        type: number
+      transaction_count:
+        type: integer
+    type: object
+  analysis.CategorySummary:
+    properties:
+      average:
+        type: number
+      category:
+        type: string
+      count:
+        type: integer
+      total:
+        type: number
+    type: object
+  analysis.DescriptionSummary:
+    properties:
+      count:
+        type: integer
+      description:
+        type: string
+      total:
+        type: number
+    type: object
+  analysis.Transaction:
+    properties:
+      amount:
+        type: number
+      category:
+        type: string
+      date:
+        type: string
+      description:
+        type: string
+    type: object
   parser.Transaction:
     properties:
       amount:
@@ -29,6 +86,34 @@ info:
   title: Gastei Quanto API
   version: "1.0"
 paths:
+  /analysis/transactions:
+    post:
+      consumes:
+      - application/json
+      description: Agrupa e analisa transações por categoria e descrição
+      parameters:
+      - description: Lista de transações
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/analysis.AnalysisRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/analysis.AnalysisResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Analisa transações
+      tags:
+      - analysis
   /parser/upload/csv:
     post:
       consumes:
