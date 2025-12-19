@@ -21,9 +21,11 @@ func NewHandler(service Service) *Handler {
 // @Tags parser
 // @Accept multipart/form-data
 // @Produce json
+// @Security BearerAuth
 // @Param file formData file true "CSV file"
 // @Success 200 {object} parser.UploadResponse
 // @Failure 400 {object} map[string]string
+// @Failure 401 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /parser/upload/csv [post]
 func (h *Handler) UploadCSV(c *gin.Context) {

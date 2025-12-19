@@ -2,8 +2,10 @@ package main
 
 import (
 	"gastei-quanto/src/internal/analysis"
+	"gastei-quanto/src/internal/auth"
 	"gastei-quanto/src/internal/parser"
 	"log"
+	"os"
 
 	"github.com/gin-gonic/gin"
 
@@ -19,10 +21,25 @@ import (
 
 // @host localhost:8080
 // @BasePath /api/v1
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Type "Bearer" followed by a space and JWT token
 func main() {
 	router := gin.Default()
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	jwtSecret := os.Getenv("JWT_SECRET")
+	if jwtSecret == "" {
+		jwtSecret = "your-secret-key-change-in-production"
+	}
+
+	authRepo := auth.NewRepository()
+	authService := auth.NewService(authRepo, jwtSecret)
+	authHandler := auth.NewHandler(authService)
+	authMiddleware := auth.AuthMiddleware(authService)
 
 	api := router.Group("/api/v1")
 	{
@@ -30,13 +47,19 @@ func main() {
 			c.JSON(200, gin.H{"status": "ok"})
 		})
 
-		parserService := parser.NewService()
-		parserHandler := parser.NewHandler(parserService)
-		parser.RegisterRoutes(api, parserHandler)
+		auth.RegisterRoutes(api, authHandler, authMiddleware)
 
-		analysisService := analysis.NewService()
-		analysisHandler := analysis.NewHandler(analysisService)
-		analysis.RegisterRoutes(api, analysisHandler)
+		protected := api.Group("")
+		protected.Use(authMiddleware)
+		{
+			parserService := parser.NewService()
+			parserHandler := parser.NewHandler(parserService)
+			parser.RegisterRoutes(protected, parserHandler)
+
+			analysisService := analysis.NewService()
+			analysisHandler := analysis.NewHandler(analysisService)
+			analysis.RegisterRoutes(protected, analysisHandler)
+		}
 	}
 
 	log.Println("🚀 Servidor rodando na porta 8080")
