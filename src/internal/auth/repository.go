@@ -60,3 +60,6 @@ func (r *memoryRepository) FindByID(id string) (*User, error) {
 
 	return user, nil
 }
+
+
+
