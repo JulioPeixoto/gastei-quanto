@@ -9,3 +9,24 @@ swagger:
 
 dev:
 	air
+
+docker-build:
+	docker-compose build
+
+docker-up:
+	docker-compose up -d
+
+docker-down:
+	docker-compose down
+
+docker-logs:
+	docker-compose logs -f
+
+docker-ps:
+	docker-compose ps
+
+docker-restart:
+	docker-compose restart
+
+docker-rebuild:
+	docker-compose up -d --build
