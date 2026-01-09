@@ -3,6 +3,7 @@ package main
 import (
 	"gastei-quanto/src/internal/analysis"
 	"gastei-quanto/src/internal/auth"
+	"gastei-quanto/src/internal/expense"
 	"gastei-quanto/src/internal/parser"
 	"log"
 	"os"
@@ -59,6 +60,11 @@ func main() {
 			analysisService := analysis.NewService()
 			analysisHandler := analysis.NewHandler(analysisService)
 			analysis.RegisterRoutes(protected, analysisHandler)
+
+			expenseRepo := expense.NewRepository()
+			expenseService := expense.NewService(expenseRepo)
+			expenseHandler := expense.NewHandler(expenseService)
+			expense.RegisterRoutes(protected, expenseHandler)
 		}
 	}
 
