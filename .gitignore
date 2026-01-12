@@ -36,7 +36,6 @@ dist/
 .DS_Store
 
 # Log files
-*.exe
 *.log
 
 # Temporary files

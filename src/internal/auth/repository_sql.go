@@ -3,6 +3,8 @@ package auth
 import (
 	"database/sql"
 	"errors"
+
+	"github.com/mattn/go-sqlite3"
 )
 
 type sqlRepository struct {
@@ -17,10 +19,11 @@ func NewSQLRepository(db *sql.DB) Repository {
 
 func (r *sqlRepository) Create(user *User) error {
 	query := `INSERT INTO users (id, email, password, created_at) VALUES (?, ?, ?, ?)`
-
+	
 	_, err := r.db.Exec(query, user.ID, user.Email, user.Password, user.CreatedAt)
 	if err != nil {
-		if err.Error() == "UNIQUE constraint failed: users.email" {
+		var sqliteErr sqlite3.Error
+		if errors.As(err, &sqliteErr) && sqliteErr.ExtendedCode == sqlite3.ErrConstraintUnique {
 			return errors.New("email already exists")
 		}
 		return err

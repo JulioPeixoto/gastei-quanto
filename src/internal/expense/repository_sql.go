@@ -139,6 +139,10 @@ func (r *sqlRepository) FindByUserID(userID string, query ListExpensesQuery) ([]
 		expenses = append(expenses, expense)
 	}
 
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
 	return expenses, nil
 }
 

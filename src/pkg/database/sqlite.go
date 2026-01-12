@@ -20,6 +20,10 @@ func NewSQLiteDatabase(dsn string) (Database, error) {
 		return nil, err
 	}
 
+	if _, err := db.Exec("PRAGMA foreign_keys = ON"); err != nil {
+		return nil, err
+	}
+
 	return &SQLiteDatabase{db: db}, nil
 }
 
@@ -32,6 +36,12 @@ func (s *SQLiteDatabase) Close() error {
 }
 
 func (s *SQLiteDatabase) Migrate() error {
+	tx, err := s.db.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
 	queries := []string{
 		`CREATE TABLE IF NOT EXISTS users (
 			id TEXT PRIMARY KEY,
@@ -58,10 +68,10 @@ func (s *SQLiteDatabase) Migrate() error {
 	}
 
 	for _, query := range queries {
-		if _, err := s.db.Exec(query); err != nil {
+		if _, err := tx.Exec(query); err != nil {
 			return err
 		}
 	}
 
-	return nil
+	return tx.Commit()
 }
