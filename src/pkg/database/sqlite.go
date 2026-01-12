@@ -65,4 +65,3 @@ func (s *SQLiteDatabase) Migrate() error {
 
 	return nil
 }
-
