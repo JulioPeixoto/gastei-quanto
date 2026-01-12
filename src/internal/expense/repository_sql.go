@@ -233,16 +233,5 @@ func (r *sqlRepository) GetStats(userID string, startDate, endDate *time.Time) (
 	return stats, nil
 }
 
-func (r *sqlRepository) matchesQuery(expense *Expense, query ListExpensesQuery) bool {
-	return true
-}
-
-func toLower(b byte) byte {
-	if b >= 'A' && b <= 'Z' {
-		return b + 32
-	}
-	return b
-}
-
 var _ = fmt.Sprint("")
 
