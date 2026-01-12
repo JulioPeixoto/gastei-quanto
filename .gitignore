@@ -19,6 +19,7 @@ vendor/
 go.work
 
 # Environment variables
+*.db
 .env
 
 # Build directories
