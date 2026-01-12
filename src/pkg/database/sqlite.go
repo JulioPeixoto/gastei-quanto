@@ -10,6 +10,9 @@ type SQLiteDatabase struct {
 	db *sql.DB
 }
 
+// NewSQLiteDatabase opens a SQLite3 database using the provided DSN and returns a Database backed by the connection.
+// It verifies connectivity with a Ping and returns an error if opening or pinging the database fails.
+// The DSN is the sqlite3 driver data source name (for example, a file path or URI).
 func NewSQLiteDatabase(dsn string) (Database, error) {
 	db, err := sql.Open("sqlite3", dsn)
 	if err != nil {

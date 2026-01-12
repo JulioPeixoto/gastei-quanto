@@ -12,6 +12,8 @@ type sqlRepository struct {
 	db *sql.DB
 }
 
+// NewSQLRepository constructs a Repository backed by the provided *sql.DB.
+// The returned Repository uses the given database handle for SQL-based expense persistence.
 func NewSQLRepository(db *sql.DB) Repository {
 	return &sqlRepository{
 		db: db,

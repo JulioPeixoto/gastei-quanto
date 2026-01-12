@@ -9,6 +9,8 @@ type sqlRepository struct {
 	db *sql.DB
 }
 
+// NewSQLRepository creates a Repository backed by the provided *sql.DB.
+// The returned repository uses the sqlRepository implementation to perform user operations against that database handle.
 func NewSQLRepository(db *sql.DB) Repository {
 	return &sqlRepository{
 		db: db,

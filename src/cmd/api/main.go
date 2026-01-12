@@ -27,7 +27,7 @@ import (
 // @securityDefinitions.apikey BearerAuth
 // @in header
 // @name Authorization
-// @description Type "Bearer" followed by a space and JWT token
+// main initializes application configuration, opens and migrates the database, constructs services and HTTP handlers (auth, parser, analysis, expense), registers routes (including Swagger and health) with authentication applied to protected endpoints, and starts the Gin HTTP server on port 8080.
 func main() {
 	dbDriver := os.Getenv("DB_DRIVER")
 	if dbDriver == "" {
