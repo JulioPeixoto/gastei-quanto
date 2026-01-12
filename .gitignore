@@ -1,41 +1,5 @@
-# Binaries for programs and plugins
-*.exe
-*.exe~
-*.dll
-*.so
-*.dylib
-
-# Test binary, built with `go test -c`
-*.test
-
-# Output of the go coverage tool
-*.out
-
-# Dependency directories
-# For go modules, this is not needed, but can be helpful in some cases
-vendor/
-
-# Go workspace file
-go.work
-
-# Environment variables
+*.db
 .env
-
-# Build directories
 bin/
-build/
-dist/
-
-# IDE and editor configurations
-.idea/
-.vscode/
-*.iml
-
-# OS-specific files
-.DS_Store
-
-# Log files
+*.exe
 *.log
-
-# Temporary files
-*.swp
