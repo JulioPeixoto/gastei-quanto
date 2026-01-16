@@ -15,6 +15,10 @@ func NewHandler(service Service) *Handler {
 	return &Handler{service: service}
 }
 
+func (h *Handler) GetUserID(c *gin.Context) string {
+	return c.GetString("user_id")
+}
+
 // UploadCSV godoc
 // @Summary Upload CSV
 // @Description Faz upload de um arquivo CSV contendo transações
