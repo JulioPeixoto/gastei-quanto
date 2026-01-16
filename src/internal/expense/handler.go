@@ -17,6 +17,19 @@ func NewHandler(service Service) *Handler {
 	}
 }
 
+// Create godoc
+// @Summary Cria uma nova despesa
+// @Description Cria uma nova despesa para o usuário autenticado
+// @Tags expenses
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body CreateExpenseRequest true "Dados da despesa"
+// @Success 201 {object} Expense
+// @Failure 400 {object} map[string]string
+// @Failure 401 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /expenses [post]
 func (h *Handler) Create(c *gin.Context) {
 	var req CreateExpenseRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -35,6 +48,19 @@ func (h *Handler) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, expense)
 }
 
+// GetByID godoc
+// @Summary Busca uma despesa por ID
+// @Description Retorna uma despesa específica do usuário autenticado
+// @Tags expenses
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "ID da despesa"
+// @Success 200 {object} Expense
+// @Failure 401 {object} map[string]string
+// @Failure 404 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /expenses/{id} [get]
 func (h *Handler) GetByID(c *gin.Context) {
 	id := c.Param("id")
 	userID := c.GetString("user_id")
@@ -52,6 +78,21 @@ func (h *Handler) GetByID(c *gin.Context) {
 	c.JSON(http.StatusOK, expense)
 }
 
+// List godoc
+// @Summary Lista todas as despesas
+// @Description Retorna todas as despesas do usuário autenticado com filtros opcionais
+// @Tags expenses
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param start_date query string false "Data inicial (YYYY-MM-DD)"
+// @Param end_date query string false "Data final (YYYY-MM-DD)"
+// @Param category query string false "Filtrar por categoria"
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]string
+// @Failure 401 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /expenses [get]
 func (h *Handler) List(c *gin.Context) {
 	var query ListExpensesQuery
 
