@@ -1,12 +1,12 @@
 package parser
 
 import (
+	"fmt"
 	"gastei-quanto/src/internal/analysis"
 	"gastei-quanto/src/internal/expense"
 	"io"
 	"log"
 	"strings"
-	"time"
 )
 
 type IntegrationService interface {
@@ -32,12 +32,24 @@ func NewIntegrationService(
 }
 
 func (s *integrationService) ProcessAndSaveCSV(userID string, file io.Reader) (*ImportAndSaveResponse, error) {
-	transactions, err := s.parserService.ParseCSV(file)
-	if err != nil {
-		return nil, err
+	if userID == "" {
+		return nil, fmt.Errorf("userID não pode ser vazio")
 	}
 
-	log.Printf("Parsed %d transactions from CSV", len(transactions))
+	if file == nil {
+		return nil, fmt.Errorf("arquivo não pode ser nulo")
+	}
+
+	transactions, err := s.parserService.ParseCSV(file)
+	if err != nil {
+		return nil, fmt.Errorf("erro ao processar CSV: %w", err)
+	}
+
+	if len(transactions) == 0 {
+		return nil, fmt.Errorf("nenhuma transação encontrada no arquivo CSV")
+	}
+
+	log.Printf("Parsed %d transactions from CSV for user %s", len(transactions), userID)
 
 	categorizedTransactions := s.categorizeTransactions(transactions)
 
@@ -45,10 +57,11 @@ func (s *integrationService) ProcessAndSaveCSV(userID string, file io.Reader) (*
 
 	savedCount, err := s.expenseService.ImportTransactions(userID, expenseTransactions)
 	if err != nil {
-		return nil, err
+		log.Printf("Error saving transactions for user %s: %v", userID, err)
+		return nil, fmt.Errorf("erro ao salvar transações: %w", err)
 	}
 
-	log.Printf("Saved %d transactions for user %s", savedCount, userID)
+	log.Printf("Successfully saved %d/%d transactions for user %s", savedCount, len(transactions), userID)
 
 	return &ImportAndSaveResponse{
 		Message:      "CSV processado e salvo com sucesso",
