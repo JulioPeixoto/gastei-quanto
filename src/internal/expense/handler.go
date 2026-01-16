@@ -249,6 +249,19 @@ func (h *Handler) GetStats(c *gin.Context) {
 	c.JSON(http.StatusOK, stats)
 }
 
+// ImportTransactions godoc
+// @Summary Importa transações em lote
+// @Description Importa múltiplas transações de uma só vez para o usuário autenticado
+// @Tags expenses
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body ImportTransactionsRequest true "Lista de transações"
+// @Success 201 {object} map[string]interface{}
+// @Failure 400 {object} map[string]string
+// @Failure 401 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /expenses/import [post]
 func (h *Handler) ImportTransactions(c *gin.Context) {
 	var req ImportTransactionsRequest
 	if err := c.ShouldBindJSON(&req); err != nil {

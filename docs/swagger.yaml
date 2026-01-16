@@ -94,6 +94,99 @@ definitions:
       id:
         type: string
     type: object
+  expense.CreateExpenseRequest:
+    properties:
+      amount:
+        type: number
+      category:
+        type: string
+      date:
+        type: string
+      description:
+        type: string
+      type:
+        enum:
+        - income
+        - expense
+        type: string
+    required:
+    - amount
+    - date
+    - description
+    - type
+    type: object
+  expense.Expense:
+    properties:
+      amount:
+        type: number
+      category:
+        type: string
+      created_at:
+        type: string
+      date:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      type:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  expense.ExpenseStats:
+    properties:
+      balance:
+        type: number
+      count:
+        type: integer
+      expense_count:
+        type: integer
+      income_count:
+        type: integer
+      total_expense:
+        type: number
+      total_income:
+        type: number
+    type: object
+  expense.ImportTransactionsRequest:
+    properties:
+      transactions:
+        items:
+          $ref: '#/definitions/expense.Transaction'
+        type: array
+    required:
+    - transactions
+    type: object
+  expense.Transaction:
+    properties:
+      amount:
+        type: number
+      category:
+        type: string
+      date:
+        type: string
+      description:
+        type: string
+    type: object
+  expense.UpdateExpenseRequest:
+    properties:
+      amount:
+        type: number
+      category:
+        type: string
+      date:
+        type: string
+      description:
+        type: string
+      type:
+        enum:
+        - income
+        - expense
+        type: string
+    type: object
   parser.Transaction:
     properties:
       amount:
@@ -251,6 +344,318 @@ paths:
       summary: Register new user
       tags:
       - auth
+  /expenses:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todas as despesas do usuário autenticado com filtros opcionais
+      parameters:
+      - description: Data inicial (YYYY-MM-DD)
+        in: query
+        name: start_date
+        type: string
+      - description: Data final (YYYY-MM-DD)
+        in: query
+        name: end_date
+        type: string
+      - description: Filtrar por categoria
+        in: query
+        name: category
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Lista todas as despesas
+      tags:
+      - expenses
+    post:
+      consumes:
+      - application/json
+      description: Cria uma nova despesa para o usuário autenticado
+      parameters:
+      - description: Dados da despesa
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/expense.CreateExpenseRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/expense.Expense'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Cria uma nova despesa
+      tags:
+      - expenses
+  /expenses/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove uma despesa do usuário autenticado
+      parameters:
+      - description: ID da despesa
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Deleta uma despesa
+      tags:
+      - expenses
+    get:
+      consumes:
+      - application/json
+      description: Retorna uma despesa específica do usuário autenticado
+      parameters:
+      - description: ID da despesa
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/expense.Expense'
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Busca uma despesa por ID
+      tags:
+      - expenses
+    put:
+      consumes:
+      - application/json
+      description: Atualiza uma despesa existente do usuário autenticado
+      parameters:
+      - description: ID da despesa
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Dados atualizados da despesa
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/expense.UpdateExpenseRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/expense.Expense'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Atualiza uma despesa
+      tags:
+      - expenses
+  /expenses/import:
+    post:
+      consumes:
+      - application/json
+      description: Importa múltiplas transações de uma só vez para o usuário autenticado
+      parameters:
+      - description: Lista de transações
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/expense.ImportTransactionsRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Importa transações em lote
+      tags:
+      - expenses
+  /expenses/stats:
+    get:
+      consumes:
+      - application/json
+      description: Retorna estatísticas agregadas das despesas do usuário autenticado
+      parameters:
+      - description: Data inicial (YYYY-MM-DD)
+        in: query
+        name: start_date
+        type: string
+      - description: Data final (YYYY-MM-DD)
+        in: query
+        name: end_date
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/expense.ExpenseStats'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Obtém estatísticas das despesas
+      tags:
+      - expenses
   /parser/upload/csv:
     post:
       consumes:
