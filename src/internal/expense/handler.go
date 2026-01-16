@@ -133,6 +133,21 @@ func (h *Handler) List(c *gin.Context) {
 	})
 }
 
+// Update godoc
+// @Summary Atualiza uma despesa
+// @Description Atualiza uma despesa existente do usuário autenticado
+// @Tags expenses
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "ID da despesa"
+// @Param request body UpdateExpenseRequest true "Dados atualizados da despesa"
+// @Success 200 {object} Expense
+// @Failure 400 {object} map[string]string
+// @Failure 401 {object} map[string]string
+// @Failure 404 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /expenses/{id} [put]
 func (h *Handler) Update(c *gin.Context) {
 	id := c.Param("id")
 	userID := c.GetString("user_id")
@@ -156,6 +171,19 @@ func (h *Handler) Update(c *gin.Context) {
 	c.JSON(http.StatusOK, expense)
 }
 
+// Delete godoc
+// @Summary Deleta uma despesa
+// @Description Remove uma despesa do usuário autenticado
+// @Tags expenses
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "ID da despesa"
+// @Success 200 {object} map[string]string
+// @Failure 401 {object} map[string]string
+// @Failure 404 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /expenses/{id} [delete]
 func (h *Handler) Delete(c *gin.Context) {
 	id := c.Param("id")
 	userID := c.GetString("user_id")
@@ -175,6 +203,20 @@ func (h *Handler) Delete(c *gin.Context) {
 	})
 }
 
+// GetStats godoc
+// @Summary Obtém estatísticas das despesas
+// @Description Retorna estatísticas agregadas das despesas do usuário autenticado
+// @Tags expenses
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param start_date query string false "Data inicial (YYYY-MM-DD)"
+// @Param end_date query string false "Data final (YYYY-MM-DD)"
+// @Success 200 {object} ExpenseStats
+// @Failure 400 {object} map[string]string
+// @Failure 401 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /expenses/stats [get]
 func (h *Handler) GetStats(c *gin.Context) {
 	userID := c.GetString("user_id")
 
