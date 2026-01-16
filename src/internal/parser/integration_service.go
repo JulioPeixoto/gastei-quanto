@@ -103,28 +103,32 @@ func (s *integrationService) categorizeTransactions(transactions []Transaction) 
 func (s *integrationService) suggestCategory(description string) string {
 	descLower := strings.ToLower(description)
 
-	transportKeywords := []string{"uber", "99", "taxi", "ride", "dl*", "pg *", "transporte"}
+	if strings.Contains(descLower, "estorno") || strings.Contains(descLower, "crédito de") || strings.Contains(descLower, "credito de") || strings.Contains(descLower, "pagamento recebido") {
+		return "Credito"
+	}
+
+	transportKeywords := []string{"uber", "99", "taxi", "ride", "dl*", "pg *", "dl *", "transporte", "estacionamento"}
 	for _, keyword := range transportKeywords {
 		if strings.Contains(descLower, keyword) {
 			return "Transporte"
 		}
 	}
 
-	foodKeywords := []string{"ifood", "restaurante", "padaria", "panif", "pizza", "lanche", "acai", "food"}
+	foodKeywords := []string{"ifood", "restaurante", "padaria", "panif", "pizza", "lanche", "acai", "açai", "food", "bar", "cafe", "café", "tempero"}
 	for _, keyword := range foodKeywords {
 		if strings.Contains(descLower, keyword) {
 			return "Alimentacao"
 		}
 	}
 
-	shoppingKeywords := []string{"amazon", "mercado", "compra"}
+	shoppingKeywords := []string{"amazon", "mercado", "compra", "loja", "mercadolivre"}
 	for _, keyword := range shoppingKeywords {
 		if strings.Contains(descLower, keyword) {
 			return "Compras"
 		}
 	}
 
-	subscriptionKeywords := []string{"spotify", "netflix", "prime", "assinatura"}
+	subscriptionKeywords := []string{"spotify", "netflix", "prime", "assinatura", "dm *"}
 	for _, keyword := range subscriptionKeywords {
 		if strings.Contains(descLower, keyword) {
 			return "Assinaturas"
@@ -133,10 +137,6 @@ func (s *integrationService) suggestCategory(description string) string {
 
 	if strings.Contains(descLower, "iof") {
 		return "Taxas"
-	}
-
-	if strings.Contains(descLower, "estorno") || strings.Contains(descLower, "credito") || strings.Contains(descLower, "pagamento recebido") {
-		return "Credito"
 	}
 
 	return "Outros"
