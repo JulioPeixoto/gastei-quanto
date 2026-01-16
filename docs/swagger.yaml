@@ -187,6 +187,19 @@ definitions:
         - expense
         type: string
     type: object
+  parser.ImportAndSaveResponse:
+    properties:
+      message:
+        type: string
+      processed:
+        type: integer
+      saved:
+        type: integer
+      transactions:
+        items:
+          $ref: '#/definitions/parser.Transaction'
+        type: array
+    type: object
   parser.Transaction:
     properties:
       amount:
@@ -656,6 +669,48 @@ paths:
       summary: Obtém estatísticas das despesas
       tags:
       - expenses
+  /parser/import-and-save:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Faz upload de um arquivo CSV, categoriza e salva as transações
+        automaticamente
+      parameters:
+      - description: CSV file
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/parser.ImportAndSaveResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Upload CSV e salvar automaticamente
+      tags:
+      - parser
   /parser/upload/csv:
     post:
       consumes:

@@ -696,6 +696,70 @@
                 }
             }
         },
+        "/parser/import-and-save": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Faz upload de um arquivo CSV, categoriza e salva as transações automaticamente",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "parser"
+                ],
+                "summary": "Upload CSV e salvar automaticamente",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "CSV file",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/parser.ImportAndSaveResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/parser/upload/csv": {
             "post": {
                 "security": [
@@ -1043,6 +1107,26 @@
                         "income",
                         "expense"
                     ]
+                }
+            }
+        },
+        "parser.ImportAndSaveResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "processed": {
+                    "type": "integer"
+                },
+                "saved": {
+                    "type": "integer"
+                },
+                "transactions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/parser.Transaction"
+                    }
                 }
             }
         },
