@@ -72,6 +72,8 @@ func (s *integrationService) ProcessAndSaveCSV(userID string, file io.Reader) (*
 }
 
 func (s *integrationService) categorizeTransactions(transactions []Transaction) []Transaction {
+	log.Printf("Starting categorization of %d transactions", len(transactions))
+	
 	analysisTransactions := make([]analysis.Transaction, len(transactions))
 	for i, t := range transactions {
 		analysisTransactions[i] = analysis.Transaction{
@@ -83,19 +85,24 @@ func (s *integrationService) categorizeTransactions(transactions []Transaction) 
 	}
 
 	result := s.analysisService.AnalyzeTransactions(analysisTransactions)
+	log.Printf("Analysis completed: Total spent: %.2f, Total income: %.2f", result.TotalSpent, result.TotalIncome)
 
 	categoryMap := make(map[string]string)
 	for _, cat := range result.ByCategory {
 		categoryMap[cat.Category] = cat.Category
 	}
 
+	categorizedCount := 0
 	for i := range transactions {
 		if transactions[i].Category == "" {
 			category := s.suggestCategory(transactions[i].Description)
 			transactions[i].Category = category
-			log.Printf("Auto-categorized '%s' as '%s'", transactions[i].Description, category)
+			categorizedCount++
+			log.Printf("Auto-categorized [%d/%d] '%s' as '%s'", i+1, len(transactions), transactions[i].Description, category)
 		}
 	}
+
+	log.Printf("Categorization complete: %d transactions auto-categorized", categorizedCount)
 
 	return transactions
 }
