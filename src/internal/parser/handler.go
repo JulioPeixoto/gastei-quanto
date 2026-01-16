@@ -8,11 +8,19 @@ import (
 )
 
 type Handler struct {
-	service Service
+	service            Service
+	integrationService IntegrationService
 }
 
 func NewHandler(service Service) *Handler {
 	return &Handler{service: service}
+}
+
+func NewIntegrationHandler(service Service, integrationService IntegrationService) *Handler {
+	return &Handler{
+		service:            service,
+		integrationService: integrationService,
+	}
 }
 
 func (h *Handler) GetUserID(c *gin.Context) string {
@@ -71,4 +79,69 @@ func (h *Handler) UploadCSV(c *gin.Context) {
 		Count:        len(transactions),
 		Transactions: transactions,
 	})
+}
+
+// ImportAndSaveCSV godoc
+// @Summary Upload CSV e salvar automaticamente
+// @Description Faz upload de um arquivo CSV, categoriza e salva as transações automaticamente
+// @Tags parser
+// @Accept multipart/form-data
+// @Produce json
+// @Security BearerAuth
+// @Param file formData file true "CSV file"
+// @Success 200 {object} parser.ImportAndSaveResponse
+// @Failure 400 {object} map[string]string
+// @Failure 401 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /parser/import-and-save [post]
+func (h *Handler) ImportAndSaveCSV(c *gin.Context) {
+	if h.integrationService == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Serviço de integração não disponível",
+		})
+		return
+	}
+
+	file, err := c.FormFile("file")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Arquivo não encontrado. Use o campo 'file' no form-data",
+		})
+		return
+	}
+
+	if file.Header.Get("Content-Type") != "text/csv" &&
+		!strings.HasSuffix(file.Filename, ".csv") {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Apenas arquivos CSV são aceitos",
+		})
+		return
+	}
+
+	f, err := file.Open()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Erro ao abrir arquivo",
+		})
+		return
+	}
+	defer f.Close()
+
+	userID := c.GetString("user_id")
+	if userID == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "Usuário não autenticado",
+		})
+		return
+	}
+
+	result, err := h.integrationService.ProcessAndSaveCSV(userID, f)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Erro ao processar e salvar CSV: " + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, result)
 }
