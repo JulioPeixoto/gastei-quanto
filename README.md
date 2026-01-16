@@ -171,12 +171,33 @@ Import transactions from parser (requires authentication).
 
 **POST /api/v1/parser/upload/csv**
 
-Upload a CSV file with transactions. Expected format:
+Upload a CSV file with transactions. Returns parsed transactions without saving.
+
+**POST /api/v1/parser/import-and-save** (NEW)
+
+Upload a CSV file with transactions, automatically categorize them, and save to the database. This endpoint combines parsing, analysis, and expense creation in one step.
+
+Expected CSV format:
 
 ```csv
-date,title,amount
-2025-09-01,Store Name,14.60
+date,description,amount,category
+2025-09-01,Store Name,14.60,
+2025-08-30,Uber ride,10.20,
 ```
+
+Columns:
+- `date` (required): Transaction date (YYYY-MM-DD, DD/MM/YYYY, or MM/DD/YYYY)
+- `amount` (required): Transaction amount
+- `description` (optional): Transaction description
+- `category` (optional): If empty, category will be auto-suggested based on keywords
+
+Auto-categorization keywords:
+- **Transporte**: uber, 99, taxi, ride
+- **Alimentacao**: ifood, restaurante, padaria, pizza
+- **Compras**: amazon, mercado, loja
+- **Assinaturas**: spotify, netflix, prime
+- **Taxas**: iof
+- **Credito**: estorno, pagamento recebido
 
 ### Analysis
 
