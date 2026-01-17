@@ -211,17 +211,6 @@ definitions:
       description:
         type: string
     type: object
-  parser.UploadResponse:
-    properties:
-      count:
-        type: integer
-      message:
-        type: string
-      transactions:
-        items:
-          $ref: '#/definitions/parser.Transaction'
-        type: array
-    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -669,7 +658,7 @@ paths:
       summary: Obtém estatísticas das despesas
       tags:
       - expenses
-  /parser/import-and-save:
+  /parser/upload/csv:
     post:
       consumes:
       - multipart/form-data
@@ -709,47 +698,6 @@ paths:
       security:
       - BearerAuth: []
       summary: Upload CSV e salvar automaticamente
-      tags:
-      - parser
-  /parser/upload/csv:
-    post:
-      consumes:
-      - multipart/form-data
-      description: Faz upload de um arquivo CSV contendo transações
-      parameters:
-      - description: CSV file
-        in: formData
-        name: file
-        required: true
-        type: file
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/parser.UploadResponse'
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "401":
-          description: Unauthorized
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      security:
-      - BearerAuth: []
-      summary: Upload CSV
       tags:
       - parser
 securityDefinitions:

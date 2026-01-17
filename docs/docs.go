@@ -702,7 +702,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/parser/import-and-save": {
+        "/parser/upload/csv": {
             "post": {
                 "security": [
                     {
@@ -734,70 +734,6 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/parser.ImportAndSaveResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/parser/upload/csv": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Faz upload de um arquivo CSV contendo transações",
-                "consumes": [
-                    "multipart/form-data"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "parser"
-                ],
-                "summary": "Upload CSV",
-                "parameters": [
-                    {
-                        "type": "file",
-                        "description": "CSV file",
-                        "name": "file",
-                        "in": "formData",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/parser.UploadResponse"
                         }
                     },
                     "400": {
@@ -1150,23 +1086,6 @@ const docTemplate = `{
                 },
                 "description": {
                     "type": "string"
-                }
-            }
-        },
-        "parser.UploadResponse": {
-            "type": "object",
-            "properties": {
-                "count": {
-                    "type": "integer"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "transactions": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/parser.Transaction"
-                    }
                 }
             }
         }

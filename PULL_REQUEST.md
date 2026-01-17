@@ -6,11 +6,11 @@ Esta PR adiciona a funcionalidade de importar arquivos CSV de transações com c
 
 ## Mudanças Principais
 
-### 1. Novo Endpoint: `/api/v1/parser/import-and-save`
-- Processa arquivos CSV de transações
+### 1. Endpoint Modificado: `/api/v1/parser/upload/csv`
+- Agora processa E salva arquivos CSV de transações automaticamente
 - Categoriza automaticamente baseado em palavras-chave
-- Salva diretamente no banco de dados
-- Retorna estatísticas do processamento
+- Salva diretamente no banco de dados vinculado ao usuário
+- Retorna estatísticas do processamento (transações processadas e salvas)
 
 ### 2. Serviço de Integração (`integration_service.go`)
 - Coordena parser, análise e expense
@@ -59,7 +59,7 @@ curl -X POST http://localhost:8080/api/v1/auth/register \
 
 ### 2. Upload do CSV
 ```bash
-curl -X POST http://localhost:8080/api/v1/parser/import-and-save \
+curl -X POST http://localhost:8080/api/v1/parser/upload/csv \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -F "file=@examples/sample_transactions.csv"
 ```
@@ -72,11 +72,12 @@ curl -X GET http://localhost:8080/api/v1/expenses \
 
 ## Benefícios
 
-1. **Experiência do Usuário**: Upload e salvamento em um único passo
+1. **Experiência do Usuário**: Upload e salvamento em um único passo no endpoint existente
 2. **Categorização Inteligente**: Reduz trabalho manual de categorização
 3. **Validações Robustas**: Tratamento de erros em todas as etapas
 4. **Logs Detalhados**: Facilita debugging e monitoramento
 5. **Documentação Completa**: README, Swagger e documentação específica
+6. **Backward Compatible**: Usa o endpoint existente, sem quebrar integração
 
 ## Testes Realizados
 

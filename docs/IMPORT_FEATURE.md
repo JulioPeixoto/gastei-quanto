@@ -26,19 +26,13 @@ O sistema utiliza palavras-chave para sugerir categorias automaticamente:
 - **Crédito**: estorno, crédito de, pagamento recebido
 - **Outros**: qualquer transação não categorizada
 
-### Endpoints
+### Endpoint
 
-#### 1. Upload CSV (apenas parsing)
+#### Upload CSV com salvamento automático
 ```
 POST /api/v1/parser/upload/csv
 ```
-Processa o CSV e retorna as transações sem salvar.
-
-#### 2. Import and Save (novo)
-```
-POST /api/v1/parser/import-and-save
-```
-Processa, categoriza e salva automaticamente as transações.
+Processa o CSV, categoriza automaticamente e salva as transações no banco de dados vinculadas ao usuário autenticado.
 
 **Response:**
 ```json
