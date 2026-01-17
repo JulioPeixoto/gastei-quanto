@@ -14,3 +14,10 @@ type UploadResponse struct {
 	Count        int           `json:"count"`
 	Transactions []Transaction `json:"transactions"`
 }
+
+type ImportAndSaveResponse struct {
+	Message      string        `json:"message"`
+	Processed    int           `json:"processed"`
+	Saved        int           `json:"saved"`
+	Transactions []Transaction `json:"transactions"`
+}

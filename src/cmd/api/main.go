@@ -84,18 +84,19 @@ func main() {
 		protected := api.Group("")
 		protected.Use(authMiddleware)
 		{
-			parserService := parser.NewService()
-			parserHandler := parser.NewHandler(parserService)
-			parser.RegisterRoutes(protected, parserHandler)
+			expenseRepo := expense.NewSQLRepository(db.GetDB())
+			expenseService := expense.NewService(expenseRepo)
+			expenseHandler := expense.NewHandler(expenseService)
+			expense.RegisterRoutes(protected, expenseHandler)
 
 			analysisService := analysis.NewService()
 			analysisHandler := analysis.NewHandler(analysisService)
 			analysis.RegisterRoutes(protected, analysisHandler)
 
-			expenseRepo := expense.NewSQLRepository(db.GetDB())
-			expenseService := expense.NewService(expenseRepo)
-			expenseHandler := expense.NewHandler(expenseService)
-			expense.RegisterRoutes(protected, expenseHandler)
+			parserService := parser.NewService()
+			parserIntegrationService := parser.NewIntegrationService(parserService, analysisService, expenseService)
+			parserHandler := parser.NewIntegrationHandler(parserService, parserIntegrationService)
+			parser.RegisterRoutes(protected, parserHandler)
 		}
 	}
 

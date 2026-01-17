@@ -709,7 +709,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Faz upload de um arquivo CSV contendo transações",
+                "description": "Faz upload de um arquivo CSV, categoriza e salva as transações automaticamente",
                 "consumes": [
                     "multipart/form-data"
                 ],
@@ -719,7 +719,7 @@ const docTemplate = `{
                 "tags": [
                     "parser"
                 ],
-                "summary": "Upload CSV",
+                "summary": "Upload CSV e salvar automaticamente",
                 "parameters": [
                     {
                         "type": "file",
@@ -733,7 +733,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/parser.UploadResponse"
+                            "$ref": "#/definitions/parser.ImportAndSaveResponse"
                         }
                     },
                     "400": {
@@ -1052,6 +1052,26 @@ const docTemplate = `{
                 }
             }
         },
+        "parser.ImportAndSaveResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "processed": {
+                    "type": "integer"
+                },
+                "saved": {
+                    "type": "integer"
+                },
+                "transactions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/parser.Transaction"
+                    }
+                }
+            }
+        },
         "parser.Transaction": {
             "type": "object",
             "properties": {
@@ -1066,23 +1086,6 @@ const docTemplate = `{
                 },
                 "description": {
                     "type": "string"
-                }
-            }
-        },
-        "parser.UploadResponse": {
-            "type": "object",
-            "properties": {
-                "count": {
-                    "type": "integer"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "transactions": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/parser.Transaction"
-                    }
                 }
             }
         }
